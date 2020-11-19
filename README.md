@@ -1,4 +1,5 @@
 # All of my python projects in one repo.
 
-1. **Todo list with SQLAlchemy.** Useful for people who forget what needs to be done :D.
-2. **To be added**
+1. **Todo list with SQLAlchemy.** Useful for people, especially me, who forgets what needs to be done :D.
+2. **Gilded Rose Refactoring with pytest**
+3. **TBA**

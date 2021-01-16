@@ -88,12 +88,21 @@ class Game:
     def __init__(self):
         pass
 
+    # Need to know when the player goes over. Returns a simple T/F.
+    def player_over_21(self):
+        return self.player_hand.display_value() > 21
+
+    # Need to know when the player goes over. Returns a simple T/F.
+    def dealer_over_21(self):
+        return self.dealer_hand.display_value() > 21
+
     # The checks for instant blackjack win!
     def check_blackjack(self):
-        player, dealer = False, False
-        if self.player_hand.get_value() == 21:
+        player = False
+        dealer = False
+        if self.player_hand.value == 21:
             player = True
-        if self.dealer_hand.get_value() == 21:
+        if self.dealer_hand.value == 21:
             dealer = True
 
         return player, dealer
@@ -110,8 +119,10 @@ class Game:
 
     # Start the game!
     def play_bj(self):
-        # Set the loop game state.
+        # Set the loop game state. Playing/Not Playing
         game_state = True
+        # Set the other loop state. Is this game over?
+        game_over = False
 
         while game_state:
             # Start with a standard deck, shuffle it. TO-DO: implement the amount of decks.
@@ -133,19 +144,77 @@ class Game:
             print("\nDealer hand:")
             self.dealer_hand.display_part_hand()
 
-            # The game can end instantly if the player or dealer has blackjack!
-            game_over = False
             while not game_over:
+                # A quick check for a potential instant blackjack win. If so - do not continue.
                 player_bj, dealer_bj = self.check_blackjack()
                 if player_bj or dealer_bj:
+                    # BLACKJACK can only happen at the beginning of the game, meaning both have only 2 cards.
+                    if len(self.player_hand.cards) == 2 and len(self.dealer_hand.cards) == 2:
+                        game_over = True
+                        self.show_bj_result(player_bj, dealer_bj)
+                        continue
+
+                # Let's ask the user, what does he want to do. + invalid input check.
+                while True:
+                    try:
+                        user_input = input('Your decision: [(H)it, (S)tand]').lower()
+                        if user_input not in ['h', 'hit', 's', 'stand']:
+                            raise ValueError
+                        break
+                    except ValueError:
+                        print("Invalid input, try again!")
+
+
+                # If the user hits.
+                if user_input in ['h', 'hit']:
+                    self.player_hand.add_card(self.play_deck.deal())
+                    self.player_hand.display_full_hand()
+
+                    # Need to make sure the player doesn't go overboard.
+                    if self.player_over_21():
+                        print("The player goes over 21 and loses.")
+                        game_over = True
+
+                # The player stands, let's finish rolling out the game. ADD: dealer drawing cards until 17.
+                else:
+                    # Show both hands fully.
+                    self.player_hand.display_full_hand()
+                    self.dealer_hand.display_full_hand()
+
+                    # Show both values fully.
+                    print("Final Result:")
+                    print("Player Hand Value:", self.player_hand.display_value())
+                    print("Dealer Hand Value:", self.dealer_hand.display_value())
+
+                    # Announce the winner!
+                    if self.player_hand.value > self.dealer_hand.value:
+                        print("Player WINS!")
+                    elif self.player_hand.value < self.dealer_hand.value:
+                        print("Dealer WINS!")
+                    elif self.player_hand.value == self.dealer_hand.value:
+                        print("It's a tie!")
+
                     game_over = True
-                    self.show_bj_result(player_bj, dealer_bj)
-                    continue
 
+            while True:
+                try:
+                    play_again_input = input("Play again? [Yes/No]").lower()
+                    if play_again_input not in ['yes', 'no', 'y', 'n']:
+                        raise ValueError
+                    break
 
+                except ValueError:
+                    print("Invalid input, try again.")
 
+            if play_again_input in ['no', 'n']:
+                print("Thank you for playing!")
+                break
+            else:
+                game_over = False
+                continue
 
-# Let's play!
 if __name__ == '__main__':
+    # Create an instance of the game.
     blackjack = Game()
+    # Launch the game.
     blackjack.play_bj()

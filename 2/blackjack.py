@@ -84,25 +84,68 @@ class Hand:
         print(self.cards[1])
         print("Value:", values[self.cards[1].rank])
 
+class Game:
+    def __init__(self):
+        pass
 
-def game_on():
-    # Start with a standard deck, shuffle it. TO-DO: implement the amount of decks.
-    play_deck = Deck()
-    play_deck.shuffle()
+    # The checks for instant blackjack win!
+    def check_blackjack(self):
+        player, dealer = False, False
+        if self.player_hand.get_value() == 21:
+            player = True
+        if self.dealer_hand.get_value() == 21:
+            dealer = True
 
-    # Player hand and dealer hand
-    player_hand = Hand()
-    dealer_hand = Hand()
+        return player, dealer
 
-    # Let's add cards to those hands.
-    for _ in range(2):
-        player_hand.add_card(play_deck.deal())
-        dealer_hand.add_card(play_deck.deal())
+    # Shows the results of instant blackjack win!
+    def show_bj_result(self, player_bj, dealer_bj):
+        if player_bj and dealer_bj:
+            print("Both have BLACKJACK! Draw.")
+        elif player_bj:
+            print("Player WINS with a BLACKJACK!")
+        elif dealer_bj:
+            print("Dealer WINS with a BLACKJACK!")
 
-    print("Player hand:")
-    player_hand.display_full_hand()
-    print("\nDealer hand:")
-    dealer_hand.display_part_hand()
 
+    # Start the game!
+    def play_bj(self):
+        # Set the loop game state.
+        game_state = True
+
+        while game_state:
+            # Start with a standard deck, shuffle it. TO-DO: implement the amount of decks.
+            self.play_deck = Deck()
+            self.play_deck.shuffle()
+
+            # Player hand and dealer hand
+            self.player_hand = Hand()
+            self.dealer_hand = Hand()
+
+            # Let's add cards to those hands.
+            for _ in range(2):
+                self.player_hand.add_card(self.play_deck.deal())
+                self.dealer_hand.add_card(self.play_deck.deal())
+
+            # Display the hands.
+            print("Player hand:")
+            self.player_hand.display_full_hand()
+            print("\nDealer hand:")
+            self.dealer_hand.display_part_hand()
+
+            # The game can end instantly if the player or dealer has blackjack!
+            game_over = False
+            while not game_over:
+                player_bj, dealer_bj = self.check_blackjack()
+                if player_bj or dealer_bj:
+                    game_over = True
+                    self.show_bj_result(player_bj, dealer_bj)
+                    continue
+
+
+
+
+# Let's play!
 if __name__ == '__main__':
-    game_on()
+    blackjack = Game()
+    blackjack.play_bj()

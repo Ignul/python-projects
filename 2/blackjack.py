@@ -80,9 +80,9 @@ class Hand:
         print("Value:", self.display_value())
 
     def display_part_hand(self):
-        print(self.cards[0])
         print("---HIDDEN---")
-        print("Value:", values[self.cards[0].rank])
+        print(self.cards[1])
+        print("Value:", values[self.cards[1].rank])
 
 
 def game_on():

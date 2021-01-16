@@ -14,6 +14,7 @@ class Card:
     def __repr__(self):
         return f"{self.suit} of {self.rank}"
 
+
 class Deck:
     def __init__(self):
         self.cards = []
@@ -42,6 +43,7 @@ class Deck:
     # Deal the last card from the list
     def deal(self):
         return self.cards.pop()
+
 
 class Hand:
     def __init__(self):
@@ -84,15 +86,14 @@ class Hand:
         print(self.cards[1])
         print("Value:", values[self.cards[1].rank])
 
+
 class Game:
-    def __init__(self):
-        pass
 
     # Need to know when the player goes over. Returns a simple T/F.
     def player_over_21(self):
         return self.player_hand.display_value() > 21
 
-    # Need to know when the player goes over. Returns a simple T/F.
+    # Need to know when the dealer goes over. Returns a simple T/F.
     def dealer_over_21(self):
         return self.dealer_hand.display_value() > 21
 
@@ -100,9 +101,9 @@ class Game:
     def check_blackjack(self):
         player = False
         dealer = False
-        if self.player_hand.value == 21:
+        if self.player_hand.display_value() == 21:
             player = True
-        if self.dealer_hand.value == 21:
+        if self.dealer_hand.display_value() == 21:
             dealer = True
 
         return player, dealer
@@ -115,7 +116,6 @@ class Game:
             print("Player WINS with a BLACKJACK!")
         elif dealer_bj:
             print("Dealer WINS with a BLACKJACK!")
-
 
     # Start the game!
     def play_bj(self):
@@ -132,7 +132,6 @@ class Game:
             # Player hand and dealer hand
             self.player_hand = Hand()
             self.dealer_hand = Hand()
-
             # Let's add cards to those hands.
             for _ in range(2):
                 self.player_hand.add_card(self.play_deck.deal())
@@ -151,6 +150,7 @@ class Game:
                     # BLACKJACK can only happen at the beginning of the game, meaning both have only 2 cards.
                     if len(self.player_hand.cards) == 2 and len(self.dealer_hand.cards) == 2:
                         game_over = True
+                        self.dealer_hand.display_full_hand()
                         self.show_bj_result(player_bj, dealer_bj)
                         continue
 
@@ -163,7 +163,6 @@ class Game:
                         break
                     except ValueError:
                         print("Invalid input, try again!")
-
 
                 # If the user hits.
                 if user_input in ['h', 'hit']:
@@ -187,11 +186,11 @@ class Game:
                     print("Dealer Hand Value:", self.dealer_hand.display_value())
 
                     # Announce the winner!
-                    if self.player_hand.value > self.dealer_hand.value:
+                    if self.player_hand.display_value() > self.dealer_hand.display_value():
                         print("Player WINS!")
-                    elif self.player_hand.value < self.dealer_hand.value:
+                    elif self.player_hand.display_value() < self.dealer_hand.display_value():
                         print("Dealer WINS!")
-                    elif self.player_hand.value == self.dealer_hand.value:
+                    elif self.player_hand.display_value() == self.dealer_hand.display_value():
                         print("It's a tie!")
 
                     game_over = True
@@ -212,6 +211,7 @@ class Game:
             else:
                 game_over = False
                 continue
+
 
 if __name__ == '__main__':
     # Create an instance of the game.

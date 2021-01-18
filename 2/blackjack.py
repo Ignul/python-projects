@@ -12,7 +12,7 @@ class Card:
         self.rank = rank
 
     def __repr__(self):
-        return f"{self.suit} of {self.rank}"
+        return f"{self.suit} {self.rank}"
 
 
 class Deck:
@@ -88,6 +88,9 @@ class Hand:
 
 
 class Game:
+
+    def __init__(self):
+        pass
 
     # Need to know when the player goes over. Returns a simple T/F.
     def player_over_21(self):
@@ -172,13 +175,26 @@ class Game:
                     # Need to make sure the player doesn't go overboard.
                     if self.player_over_21():
                         print("The player goes over 21 and loses.")
-                        game_over = True
+                        break
 
-                # The player stands, let's finish rolling out the game. ADD: dealer drawing cards until 17.
+                # The player stands, let's finish rolling out the game.
                 else:
                     # Show both hands fully.
+                    print("Final Player Hand: ")
                     self.player_hand.display_full_hand()
+                    print("Dealer Hand: ")
                     self.dealer_hand.display_full_hand()
+
+                    # In standard casinos, the dealer always hits if it's less than 17. Stand on 17 and higher.
+                    while self.dealer_hand.display_value() < 17:
+                        print("Dealer draws one card.")
+                        self.dealer_hand.add_card(self.play_deck.deal())
+                        self.dealer_hand.display_full_hand()
+
+                        # Need to check if the dealer doesn't go over 21.
+                    if self.dealer_over_21():
+                        print("The dealer goes over 21 and loses.")
+                        break
 
                     # Show both values fully.
                     print("Final Result:")
